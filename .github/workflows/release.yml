@@ -1,8 +1,13 @@
 name: release
 
-# Déclenché quand on pousse un tag de version (ex. v1.0.1).
+# Déclenché quand on pousse un tag de version (ex. v1.0.2).
 # Build l'installateur Windows et le publie dans GitHub Releases ;
 # l'app installée le détecte et se met à jour toute seule.
+#
+# Signature de code (optionnelle) via SignPath : activée automatiquement
+# si la variable de dépôt SIGNPATH_PROJECT_SLUG est définie. Sinon, la
+# release est publiée non signée (le pipeline marche dans tous les cas).
+# Voir SIGNING.md pour la mise en place.
 on:
   push:
     tags:
@@ -30,7 +35,47 @@ jobs:
       - name: Build renderer (Vite)
         run: npm run build
 
-      - name: Build & publish installer
+      # ───────────────────── Voie NON signée (défaut) ─────────────────────
+      - name: Build & publish (non signé)
+        if: vars.SIGNPATH_PROJECT_SLUG == ''
         run: npx electron-builder --win --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─────────────────────── Voie SIGNÉE (SignPath) ──────────────────────
+      - name: Build installer (sans publication)
+        if: vars.SIGNPATH_PROJECT_SLUG != ''
+        run: npx electron-builder --win --publish never
+
+      - name: Upload de l'installateur non signé
+        if: vars.SIGNPATH_PROJECT_SLUG != ''
+        id: unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-installer
+          path: release/*.exe
+
+      - name: Signature via SignPath
+        if: vars.SIGNPATH_PROJECT_SLUG != ''
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORG_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_SLUG }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-for-completion: true
+          output-artifact-directory: release
+
+      - name: Régénère latest.yml pour l'installateur signé
+        if: vars.SIGNPATH_PROJECT_SLUG != ''
+        run: node scripts/finalize-release.mjs release
+
+      - name: Publication de la release signée
+        if: vars.SIGNPATH_PROJECT_SLUG != ''
+        run: gh release create "$env:GITHUB_REF_NAME" (Get-ChildItem release/*.exe, release/latest.yml) --title "$env:GITHUB_REF_NAME" --generate-notes
+        shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
