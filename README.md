@@ -6,6 +6,9 @@ Application **desktop** (Electron + React) reposante pour les yeux : **PDF**, **
 
 Dernière version : **https://github.com/Siruuis/lumen-reader/releases/latest**
 
+- **Windows** : `Lumen-Setup-x.y.z.exe` (installateur, mises à jour automatiques)
+- **Android** : `Lumen-vx.y.z.apk` (à installer en autorisant les « sources inconnues »)
+
 Les installateurs Windows de ce projet sont signés numériquement (code signing).
 Free code signing provided by [SignPath.io](https://about.signpath.io/),
 certificate by [SignPath Foundation](https://signpath.org/).
