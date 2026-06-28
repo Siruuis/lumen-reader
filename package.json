@@ -1,7 +1,7 @@
 {
   "name": "cozy-reader",
   "private": true,
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "Lumen — a cozy, eye-friendly desktop reader for long PDFs, EPUBs and online articles.",
   "author": "Siruuis",
