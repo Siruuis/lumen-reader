@@ -2,6 +2,14 @@
 
 Application **desktop** (Electron + React) reposante pour les yeux : **PDF**, **EPUB** et **articles en ligne**, avec dark mode doux, réglages de confort et marque-pages personnalisés. Tout reste en **local** sur ta machine (IndexedDB) - aucun serveur, aucune donnée envoyée ailleurs.
 
+## Téléchargement
+
+Dernière version : **https://github.com/Siruuis/lumen-reader/releases/latest**
+
+Les installateurs Windows de ce projet sont signés numériquement (code signing).
+Free code signing provided by [SignPath.io](https://about.signpath.io/),
+certificate by [SignPath Foundation](https://signpath.org/).
+
 ## Lancer
 
 ```bash
