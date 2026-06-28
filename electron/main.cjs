@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell, nativeTheme } = require('electron')
+const { app, BrowserWindow, shell, nativeTheme, ipcMain } = require('electron')
 const path = require('path')
 
 const isDev = !!process.env.ELECTRON_DEV
@@ -34,8 +34,8 @@ function createWindow() {
 }
 
 // Mises à jour automatiques via GitHub Releases.
-// Vérifie au démarrage, télécharge en arrière-plan, installe au prochain
-// redémarrage (notification système). Inactif en développement.
+// Vérifie au démarrage (puis toutes les 6 h), télécharge en arrière-plan, et
+// remonte l'état à l'UI (bannière in-app). Inactif en développement.
 function setupAutoUpdate() {
   if (isDev) return
   let autoUpdater
@@ -44,11 +44,34 @@ function setupAutoUpdate() {
   } catch {
     return // electron-updater absent (build non empaqueté) : on ignore
   }
+
+  const send = (status) => {
+    for (const w of BrowserWindow.getAllWindows()) {
+      if (!w.isDestroyed()) w.webContents.send('updater:status', status)
+    }
+  }
+
   autoUpdater.autoDownload = true
-  autoUpdater.on('error', (e) => console.error('update error', e?.message || e))
-  autoUpdater.checkForUpdatesAndNotify().catch(() => {})
-  // Re-vérifie toutes les 6 h si l'app reste ouverte longtemps
-  setInterval(() => autoUpdater.checkForUpdatesAndNotify().catch(() => {}), 6 * 60 * 60 * 1000)
+  autoUpdater.autoInstallOnAppQuit = true
+
+  autoUpdater.on('update-available', (i) => send({ state: 'available', version: i?.version }))
+  autoUpdater.on('download-progress', (p) =>
+    send({ state: 'downloading', percent: Math.round(p?.percent || 0) })
+  )
+  autoUpdater.on('update-downloaded', (i) => send({ state: 'ready', version: i?.version }))
+  autoUpdater.on('error', (e) => send({ state: 'error', message: String(e?.message || e) }))
+
+  ipcMain.on('updater:restart', () => {
+    try {
+      autoUpdater.quitAndInstall()
+    } catch (e) {
+      console.error('quitAndInstall failed', e)
+    }
+  })
+
+  const check = () => autoUpdater.checkForUpdates().catch(() => {})
+  check()
+  setInterval(check, 6 * 60 * 60 * 1000)
 }
 
 nativeTheme.themeSource = 'dark'

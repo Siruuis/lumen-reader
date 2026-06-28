@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSettings, applyTheme } from './store/useSettings'
 import Library from './components/Library.jsx'
 import Reader from './components/Reader.jsx'
+import UpdateBanner from './components/UpdateBanner.jsx'
 
 export default function App() {
   const settings = useSettings()
@@ -22,6 +23,8 @@ export default function App() {
       ) : (
         <Reader key={route.docId} docId={route.docId} onBack={goLibrary} />
       )}
+
+      <UpdateBanner />
 
       {/* Grain de papier : donne de la matière, casse les aplats sombres */}
       <div className="grain" />
