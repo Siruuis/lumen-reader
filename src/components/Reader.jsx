@@ -31,6 +31,7 @@ export default function Reader({ docId, onBack }) {
   const [showBookmarks, setShowBookmarks] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
+  const [chromeShown, setChromeShown] = useState(true)
   const [progress, setProgress] = useState(0)
   const [pageLabel, setPageLabel] = useState('')
   const [toast, setToast] = useState(null)
@@ -115,6 +116,25 @@ export default function Reader({ docId, onBack }) {
     setShowBookmarks(false)
   }
 
+  // Mode focus : sur tactile (pas de survol), un appui sur le texte
+  // réaffiche / masque les contrôles. À l'entrée en focus, on masque + on guide.
+  useEffect(() => {
+    if (settings.focusMode) {
+      setChromeShown(false)
+      flashToast(t('reader.focusHint'))
+    } else {
+      setChromeShown(true)
+    }
+  }, [settings.focusMode])
+
+  function onStageClick(e) {
+    if (!settings.focusMode) return
+    // On ignore les clics sur les éléments interactifs (zoom, liens, boutons…)
+    if (e.target.closest('.pdf-controls, .toolbar, .panel, .notes-window, a, button'))
+      return
+    setChromeShown((v) => !v)
+  }
+
   // Raccourcis clavier
   useEffect(() => {
     function onKey(e) {
@@ -161,7 +181,9 @@ export default function Reader({ docId, onBack }) {
 
   return (
     <div
-      className={`reader ${settings.focusMode ? 'focus' : ''}`}
+      className={`reader ${settings.focusMode ? 'focus' : ''} ${
+        chromeShown ? 'chrome-shown' : ''
+      }`}
       style={readerVars(settings)}
     >
       <Toolbar
@@ -180,7 +202,7 @@ export default function Reader({ docId, onBack }) {
         hasPaging={doc.type !== 'web'}
       />
 
-      <main className="reader-stage">
+      <main className="reader-stage" onClick={onStageClick}>
         {doc.type === 'pdf' && <PdfReader {...commonProps} />}
         {doc.type === 'epub' && <EpubReader {...commonProps} />}
         {doc.type === 'web' && <WebReader {...commonProps} />}

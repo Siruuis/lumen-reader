@@ -1000,11 +1000,20 @@ input[type='range']::-moz-range-thumb {
   transform: translateY(-100%);
   pointer-events: none;
 }
-.reader.focus .toolbar.auto-hide:hover,
-.reader.focus:hover > .toolbar.auto-hide {
+.reader.focus.chrome-shown .toolbar.auto-hide {
   opacity: 1;
   transform: none;
   pointer-events: auto;
+}
+/* Révélation au survol : uniquement sur desktop (souris). Sur tactile,
+   seul l'appui (chrome-shown) commande l'affichage. */
+@media (hover: hover) and (pointer: fine) {
+  .reader.focus .toolbar.auto-hide:hover,
+  .reader.focus:hover > .toolbar.auto-hide {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
 }
 
 /* ---------- PDF ---------- */
@@ -1473,7 +1482,7 @@ input[type='range']::-moz-range-thumb {
 }
 
 /* ───────── Adaptation téléphone / tactile ───────── */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   /* Toolbar compacte : on masque la pagination centrale (le contenu scrolle) */
   .toolbar {
     gap: 3px;

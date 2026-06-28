@@ -121,6 +121,7 @@ const DICT = {
 
     'reader.opening': 'Ouverture…',
     'reader.bookmarkAdded': 'Marque-page ajouté',
+    'reader.focusHint': 'Mode focus : appuie sur le texte pour afficher les contrôles.',
 
     'pdf.loading': 'Chargement du PDF…',
     'pdf.errFile': 'Impossible d’ouvrir ce PDF (fichier corrompu ?).',
@@ -259,6 +260,7 @@ const DICT = {
 
     'reader.opening': 'Opening…',
     'reader.bookmarkAdded': 'Bookmark added',
+    'reader.focusHint': 'Focus mode: tap the text to show the controls.',
 
     'pdf.loading': 'Loading PDF…',
     'pdf.errFile': 'Couldn’t open this PDF (corrupted file?).',
