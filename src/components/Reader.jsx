@@ -12,6 +12,7 @@ import {
   deleteBookmark,
 } from '../lib/db'
 import { useSettings, readerVars } from '../store/useSettings'
+import { useT } from '../lib/i18n'
 import Toolbar from './Toolbar.jsx'
 import BookmarksPanel from './BookmarksPanel.jsx'
 import SettingsPanel from './SettingsPanel.jsx'
@@ -22,6 +23,7 @@ import WebReader from './readers/WebReader.jsx'
 
 export default function Reader({ docId, onBack }) {
   const settings = useSettings()
+  const t = useT()
   const [doc, setDoc] = useState(null)
   const [file, setFile] = useState(null)
   const [initialPos, setInitialPos] = useState(undefined)
@@ -87,14 +89,14 @@ export default function Reader({ docId, onBack }) {
     const cur = ctrl.current?.getCurrent?.()
     if (!cur) return
     const bm = await addBookmark(docId, {
-      label: cur.label || 'Marque-page',
+      label: cur.label || t('bm.defaultLabel'),
       preview: cur.preview || '',
       note: '',
       position: cur.position,
     })
     setBookmarks(await getBookmarks(docId))
     setShowBookmarks(true)
-    flashToast('Marque-page ajouté')
+    flashToast(t('reader.bookmarkAdded'))
     return bm
   }
 
@@ -143,7 +145,7 @@ export default function Reader({ docId, onBack }) {
     return (
       <div className="reader-loading">
         <div className="spinner" />
-        <p>Ouverture…</p>
+        <p>{t('reader.opening')}</p>
       </div>
     )
   }

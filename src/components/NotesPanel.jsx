@@ -1,28 +1,32 @@
 import { useEffect, useRef, useState } from 'react'
 import { getNotes, saveNotes } from '../lib/db'
 import { useSettings } from '../store/useSettings'
+import { useT, useLang } from '../lib/i18n'
 import { IconClose, IconCopy, IconCheck, IconNote } from './icons.jsx'
 
 const MIN_W = 300
 const MIN_H = 240
 
 /* Encres cosy. La couleur réelle s'adapte au thème via les classes .ink-*
-   (cf. app.css) — la pastille ci-dessous n'est qu'un aperçu. */
+   (cf. app.css) — la pastille ci-dessous n'est qu'un aperçu. Le nom est
+   traduit via i18n (clé déduite de la classe : ink-amber → ink.amber). */
 const INKS = [
-  { cls: 'ink-default', color: 'var(--text)', name: 'Défaut' },
-  { cls: 'ink-amber', color: '#d8a657', name: 'Ambre' },
-  { cls: 'ink-rust', color: '#d6916a', name: 'Rouille' },
-  { cls: 'ink-coral', color: '#e0897e', name: 'Corail' },
-  { cls: 'ink-rose', color: '#d49ab4', name: 'Rose' },
-  { cls: 'ink-plum', color: '#c2a0d8', name: 'Prune' },
-  { cls: 'ink-lavender', color: '#a9aee0', name: 'Lavande' },
-  { cls: 'ink-blue', color: '#8fb6df', name: 'Bleu' },
-  { cls: 'ink-teal', color: '#7ec9c0', name: 'Sarcelle' },
-  { cls: 'ink-sage', color: '#9cc0a0', name: 'Sauge' },
-  { cls: 'ink-moss', color: '#bcc081', name: 'Mousse' },
+  { cls: 'ink-default', color: 'var(--text)' },
+  { cls: 'ink-amber', color: '#d8a657' },
+  { cls: 'ink-rust', color: '#d6916a' },
+  { cls: 'ink-coral', color: '#e0897e' },
+  { cls: 'ink-rose', color: '#d49ab4' },
+  { cls: 'ink-plum', color: '#c2a0d8' },
+  { cls: 'ink-lavender', color: '#a9aee0' },
+  { cls: 'ink-blue', color: '#8fb6df' },
+  { cls: 'ink-teal', color: '#7ec9c0' },
+  { cls: 'ink-sage', color: '#9cc0a0' },
+  { cls: 'ink-moss', color: '#bcc081' },
 ]
 
 export default function NotesPanel({ docId, docTitle, onClose, getCurrent, onGoTo }) {
+  const t = useT()
+  const lang = useLang()
   const [status, setStatus] = useState('')
   const [words, setWords] = useState(0)
   const [copied, setCopied] = useState(false)
@@ -205,11 +209,11 @@ export default function NotesPanel({ docId, docTitle, onClose, getCurrent, onGoT
             ⠿
           </span>
           <div>
-            <h3>Mes notes</h3>
+            <h3>{t('notes.title')}</h3>
             <span className="notes-doc">{docTitle}</span>
           </div>
         </div>
-        <button className="icon-btn" onClick={onClose} title="Fermer (N)">
+        <button className="icon-btn" onClick={onClose} title={t('notes.close')}>
           <IconClose />
         </button>
       </div>
@@ -225,7 +229,7 @@ export default function NotesPanel({ docId, docTitle, onClose, getCurrent, onGoT
                 e.preventDefault() // garde la sélection du texte
                 applyInk(ink.cls)
               }}
-              title={ink.name}
+              title={t(ink.cls.replace('ink-', 'ink.'))}
             />
           ))}
         </div>
@@ -235,9 +239,9 @@ export default function NotesPanel({ docId, docTitle, onClose, getCurrent, onGoT
             e.preventDefault()
             insertPageLink()
           }}
-          title="Insérer un lien vers la page actuelle"
+          title={t('notes.linkTitle')}
         >
-          <IconNote size={15} /> Lier la page
+          <IconNote size={15} /> {t('notes.linkPage')}
         </button>
       </div>
 
@@ -249,20 +253,24 @@ export default function NotesPanel({ docId, docTitle, onClose, getCurrent, onGoT
         spellCheck
         onInput={scheduleSave}
         onClick={onEditorClick}
-        data-placeholder="Écris ce que tu veux ici — idées, citations, questions… Sélectionne du texte pour le colorer, et « Lier la page » pour pointer vers l'endroit où tu lis."
+        data-placeholder={t('notes.placeholder')}
       />
 
       <div className="notes-foot">
         <span className="notes-status">
           {status === 'saving'
-            ? 'Enregistrement…'
+            ? t('notes.saving')
             : status === 'saved'
-            ? '✓ Enregistré'
-            : `${words} mot${words > 1 ? 's' : ''}`}
+            ? t('notes.saved')
+            : `${words} ${
+                (lang === 'fr' ? words > 1 : words !== 1)
+                  ? t('notes.wordPl')
+                  : t('notes.wordSg')
+              }`}
         </span>
         <button className="btn" onClick={copy} disabled={!words}>
           {copied ? <IconCheck size={15} /> : <IconCopy size={15} />}
-          {copied ? 'Copié' : 'Copier'}
+          {copied ? t('notes.copied') : t('notes.copy')}
         </button>
       </div>
 
@@ -272,7 +280,6 @@ export default function NotesPanel({ docId, docTitle, onClose, getCurrent, onGoT
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
-        title="Redimensionner"
       />
     </aside>
   )

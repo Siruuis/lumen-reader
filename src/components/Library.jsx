@@ -9,6 +9,7 @@ import {
 } from '../lib/db'
 import { generateCover } from '../lib/cover'
 import { useSettings } from '../store/useSettings'
+import { useT } from '../lib/i18n'
 import SettingsPanel from './SettingsPanel.jsx'
 import {
   IconPlus,
@@ -16,8 +17,6 @@ import {
   IconTrash,
   IconSettings,
 } from './icons.jsx'
-
-const TYPE_LABEL = { pdf: 'PDF', epub: 'EPUB', web: 'Article' }
 
 function detectType(url) {
   const clean = url.split('?')[0].toLowerCase()
@@ -35,6 +34,7 @@ export default function Library({ onOpen }) {
   const fileInput = useRef(null)
   const coverTried = useRef(new Set())
   const focusMode = useSettings((s) => s.focusMode)
+  const t = useT()
 
   const refresh = () => listDocs().then(setDocs)
   useEffect(() => {
@@ -62,14 +62,14 @@ export default function Library({ onOpen }) {
   }, [docs])
 
   const hour = new Date().getHours()
-  const greeting =
+  const greetingKey =
     hour < 6
-      ? 'Bonne nuit'
+      ? 'lib.greeting.night'
       : hour < 12
-      ? 'Bonjour'
+      ? 'lib.greeting.morning'
       : hour < 18
-      ? 'Bel après-midi'
-      : 'Bonsoir'
+      ? 'lib.greeting.afternoon'
+      : 'lib.greeting.evening'
   const featured = docs.find((d) => (d.progress || 0) > 0.01 && (d.progress || 0) < 0.99)
 
   async function handleFiles(fileList) {
@@ -128,7 +128,7 @@ export default function Library({ onOpen }) {
         <button
           className="icon-btn"
           onClick={() => setShowSettings(true)}
-          title="Apparence & confort"
+          title={t('settings.title')}
         >
           <IconSettings />
         </button>
@@ -136,16 +136,13 @@ export default function Library({ onOpen }) {
 
       <section className="hero-grid">
         <div className="hero-left">
-          <p className="hero-eyebrow">Ton coin lecture</p>
+          <p className="hero-eyebrow">{t('lib.eyebrow')}</p>
           <h1 className="hero-title">
-            {greeting}.
+            {t(greetingKey)}.
             <br />
-            <span className="hero-accent">Pose-toi et lis.</span>
+            <span className="hero-accent">{t('lib.heroAccent')}</span>
           </h1>
-          <p className="hero-sub">
-            PDF, livres et articles - doux pour les yeux, sans distraction. Tout
-            reste sur ta machine.
-          </p>
+          <p className="hero-sub">{t('lib.heroSub')}</p>
 
           {featured && (
             <button className="resume fade-in" onClick={() => onOpen(featured.id)}>
@@ -159,7 +156,7 @@ export default function Library({ onOpen }) {
                 )}
               </div>
               <div className="resume-body">
-                <span className="resume-kicker">Reprendre la lecture</span>
+                <span className="resume-kicker">{t('lib.resume')}</span>
                 <span className="resume-title">{featured.title}</span>
                 <div className="resume-progress">
                   <div className="progress">
@@ -190,8 +187,8 @@ export default function Library({ onOpen }) {
             <div className="dz-icon">
               <IconPlus size={24} />
             </div>
-            <p className="dz-title">Dépose un PDF ou un EPUB</p>
-            <p className="dz-sub">ou clique pour choisir</p>
+            <p className="dz-title">{t('lib.dzTitle')}</p>
+            <p className="dz-sub">{t('lib.dzSub')}</p>
             <div className="dz-chips">
               <span>PDF</span>
               <span>EPUB</span>
@@ -207,7 +204,7 @@ export default function Library({ onOpen }) {
           </div>
 
           <div className="import-or">
-            <span>ou colle un lien</span>
+            <span>{t('lib.or')}</span>
           </div>
 
           <form className="url-bar" onSubmit={handleAddUrl}>
@@ -215,21 +212,21 @@ export default function Library({ onOpen }) {
             <input
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="PDF, EPUB ou article web…"
+              placeholder={t('lib.urlPlaceholder')}
             />
             <button type="submit" className="btn btn-accent" disabled={!url.trim()}>
-              Ouvrir
+              {t('common.open')}
             </button>
           </form>
         </div>
       </section>
 
       <section className="shelf">
-        <h2>Ma bibliothèque {docs.length > 0 && <span>· {docs.length}</span>}</h2>
+        <h2>
+          {t('lib.shelf')} {docs.length > 0 && <span>· {docs.length}</span>}
+        </h2>
         {docs.length === 0 ? (
-          <p className="empty">
-            Rien encore. Ajoute ton premier document pour commencer à lire ✨
-          </p>
+          <p className="empty">{t('lib.empty')}</p>
         ) : (
           <div className="grid">
             {docs.map((d) => (
@@ -239,7 +236,7 @@ export default function Library({ onOpen }) {
                 onClick={() => onOpen(d.id)}
               >
                 <div className={`cover cover-${d.type} ${d.cover ? 'has-img' : ''}`}>
-                  <span className="badge">{TYPE_LABEL[d.type] || d.type}</span>
+                  <span className="badge">{t(`lib.type.${d.type}`)}</span>
                   {d.cover ? (
                     <img className="cover-img" src={d.cover} alt="" loading="lazy" />
                   ) : (
@@ -253,7 +250,7 @@ export default function Library({ onOpen }) {
                     {d.title}
                   </span>
                   <span className="card-meta">
-                    {Math.round((d.progress || 0) * 100)}% lu
+                    {t('lib.read', { n: Math.round((d.progress || 0) * 100) })}
                   </span>
                   <div className="progress">
                     <div
@@ -265,7 +262,7 @@ export default function Library({ onOpen }) {
                 <span
                   className="card-del"
                   onClick={(e) => askRemove(e, d)}
-                  title="Retirer de la bibliothèque"
+                  title={t('lib.removeTitle')}
                 >
                   <IconTrash size={16} />
                 </span>
@@ -281,18 +278,14 @@ export default function Library({ onOpen }) {
         <>
           <div className="scrim" onClick={() => setConfirmDoc(null)} />
           <div className="confirm fade-in" role="dialog">
-            <h3>Retirer ce document ?</h3>
-            <p>
-              « {confirmDoc.title} » sera retiré de ta bibliothèque, avec ses
-              marque-pages, notes et position de lecture. Le fichier d'origine
-              sur ton disque n'est pas touché.
-            </p>
+            <h3>{t('lib.confirmTitle')}</h3>
+            <p>{t('lib.confirmBody', { title: confirmDoc.title })}</p>
             <div className="confirm-actions">
               <button className="btn" onClick={() => setConfirmDoc(null)}>
-                Annuler
+                {t('common.cancel')}
               </button>
               <button className="btn btn-danger" onClick={confirmRemove}>
-                <IconTrash size={15} /> Retirer
+                <IconTrash size={15} /> {t('common.remove')}
               </button>
             </div>
           </div>

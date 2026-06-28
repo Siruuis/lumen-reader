@@ -1,13 +1,15 @@
 import { useState } from 'react'
+import { useT } from '../lib/i18n'
 import { IconClose, IconTrash, IconPlus, IconBookmarkFill } from './icons.jsx'
 
 function BookmarkRow({ bm, onGo, onUpdate, onDelete }) {
+  const t = useT()
   const [editing, setEditing] = useState(false)
   const [label, setLabel] = useState(bm.label)
   const [note, setNote] = useState(bm.note || '')
 
   function save() {
-    onUpdate(bm.id, { label: label.trim() || 'Marque-page', note })
+    onUpdate(bm.id, { label: label.trim() || t('bm.defaultLabel'), note })
     setEditing(false)
   }
 
@@ -29,30 +31,30 @@ function BookmarkRow({ bm, onGo, onUpdate, onDelete }) {
           <input
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            placeholder="Nom du marque-page"
+            placeholder={t('bm.namePlaceholder')}
             autoFocus
           />
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="Une note (optionnel)…"
+            placeholder={t('bm.notePlaceholder')}
             rows={2}
           />
           <div className="bm-edit-actions">
             <button className="btn btn-ghost" onClick={() => setEditing(false)}>
-              Annuler
+              {t('common.cancel')}
             </button>
             <button className="btn btn-accent" onClick={save}>
-              Enregistrer
+              {t('common.save')}
             </button>
           </div>
         </div>
       ) : (
         <div className="bm-actions">
-          <button className="icon-btn sm" onClick={() => setEditing(true)} title="Renommer / noter">
+          <button className="icon-btn sm" onClick={() => setEditing(true)} title={t('bm.editTitle')}>
             ✎
           </button>
-          <button className="icon-btn sm" onClick={() => onDelete(bm.id)} title="Supprimer">
+          <button className="icon-btn sm" onClick={() => onDelete(bm.id)} title={t('bm.deleteTitle')}>
             <IconTrash size={15} />
           </button>
         </div>
@@ -69,6 +71,7 @@ export default function BookmarksPanel({
   onAdd,
   onClose,
 }) {
+  const t = useT()
   const sorted = [...bookmarks].sort((a, b) => b.createdAt - a.createdAt)
 
   return (
@@ -76,7 +79,7 @@ export default function BookmarksPanel({
       <div className="scrim" onClick={onClose} />
       <aside className="panel panel-right fade-in">
         <div className="panel-head">
-          <h3>Marque-pages</h3>
+          <h3>{t('bm.title')}</h3>
           <button className="icon-btn" onClick={onClose}>
             <IconClose />
           </button>
@@ -84,13 +87,13 @@ export default function BookmarksPanel({
 
         <div className="panel-body">
           <button className="btn btn-accent full" onClick={onAdd}>
-            <IconPlus size={16} /> Marquer la position actuelle
+            <IconPlus size={16} /> {t('bm.markCurrent')}
           </button>
 
           {sorted.length === 0 ? (
             <p className="empty sm">
-              Aucun marque-page. Clique sur l'icône signet (ou appuie sur{' '}
-              <kbd>B</kbd>) pour garder ta place.
+              {t('bm.emptyBefore')} <kbd>B</kbd>
+              {t('bm.emptyAfter')}
             </p>
           ) : (
             <div className="bm-list">

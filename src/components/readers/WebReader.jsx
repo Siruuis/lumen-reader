@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { markdownToHtml } from '../../lib/markdown'
 import { getWebCache, setWebCache, updateDoc } from '../../lib/db'
+import { useT } from '../../lib/i18n'
 
 /* Récupère le contenu propre d'un article via le reader Jina (gère le CORS),
    le met en cache local, et l'affiche en mode lecture confortable. */
 export default function WebReader({ doc, url, initialPos, onLocation, controllerRef }) {
+  const t = useT()
   const scrollRef = useRef(null)
   const articleRef = useRef(null)
   const [html, setHtml] = useState(null)
@@ -40,9 +42,7 @@ export default function WebReader({ doc, url, initialPos, onLocation, controller
       } catch (e) {
         console.error(e)
         if (alive) {
-          setError(
-            "Impossible de récupérer cet article. Vérifie le lien ou ta connexion."
-          )
+          setError(t('web.err'))
           setLoading(false)
         }
       }
@@ -89,7 +89,7 @@ export default function WebReader({ doc, url, initialPos, onLocation, controller
         const max = el ? el.scrollHeight - el.clientHeight : 0
         const pct = max > 0 ? el.scrollTop / max : 0
         // Cherche le dernier titre au-dessus du haut du viewport
-        let label = `${Math.round(pct * 100)}% de l'article`
+        let label = t('web.percent', { n: Math.round(pct * 100) })
         let preview = ''
         const heads = articleRef.current?.querySelectorAll('h1,h2,h3')
         if (heads) {
@@ -100,7 +100,7 @@ export default function WebReader({ doc, url, initialPos, onLocation, controller
           })
           if (best) {
             label = best.textContent.slice(0, 60)
-            preview = `${Math.round(pct * 100)}% de l'article`
+            preview = t('web.percent', { n: Math.round(pct * 100) })
           }
         }
         return { position: { scroll: pct }, label, preview }
@@ -113,7 +113,7 @@ export default function WebReader({ doc, url, initialPos, onLocation, controller
     return (
       <div className="reader-loading">
         <div className="spinner" />
-        <p>Préparation du mode lecture…</p>
+        <p>{t('web.loading')}</p>
       </div>
     )
 

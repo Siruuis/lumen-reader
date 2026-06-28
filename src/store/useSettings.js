@@ -7,6 +7,7 @@ export const useSettings = create(
   persist(
     (set) => ({
       theme: 'dusk',
+      lang: 'auto', // 'auto' (langue de l'appareil) | 'fr' | 'en'
       font: 'serif', // id dans FONTS
       fontSize: 19, // px
       lineHeight: 1.75,

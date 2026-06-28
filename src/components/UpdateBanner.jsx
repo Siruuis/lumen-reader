@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useT } from '../lib/i18n'
 
 /* Bannière de mise à jour : écoute les événements de l'updater Electron
    (via window.lumenUpdater exposé par le preload). En dev navigateur,
    window.lumenUpdater est absent → la bannière ne s'affiche jamais. */
 export default function UpdateBanner() {
+  const t = useT()
   const [status, setStatus] = useState(null)
   const [dismissed, setDismissed] = useState(false)
 
@@ -23,7 +25,7 @@ export default function UpdateBanner() {
       <div className="update-banner fade-in">
         <span className="upd-spinner" />
         <div className="upd-body">
-          <span className="upd-text">Mise à jour en cours…</span>
+          <span className="upd-text">{t('upd.updating')}</span>
           <div className="upd-bar">
             <div className="upd-bar-fill" style={{ width: `${pct}%` }} />
           </div>
@@ -38,14 +40,14 @@ export default function UpdateBanner() {
         <span className="upd-dot" />
         <div className="upd-body">
           <span className="upd-text">
-            Lumen {status.version ? `v${status.version}` : ''} est prête à installer.
+            {t('upd.ready', { v: status.version ? `v${status.version}` : '' })}
           </span>
-          <span className="upd-sub">Redémarre pour appliquer la mise à jour.</span>
+          <span className="upd-sub">{t('upd.readySub')}</span>
         </div>
         <button className="btn btn-accent upd-btn" onClick={() => window.lumenUpdater.restart()}>
-          Redémarrer
+          {t('upd.restart')}
         </button>
-        <button className="upd-close" onClick={() => setDismissed(true)} title="Plus tard">
+        <button className="upd-close" onClick={() => setDismissed(true)} title={t('upd.later')}>
           ✕
         </button>
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import * as pdfjsLib from 'pdfjs-dist'
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 import { useSettings } from '../../store/useSettings'
+import { useT } from '../../lib/i18n'
 import { THEMES } from '../../lib/themes'
 import {
   IconZoomIn,
@@ -76,6 +77,7 @@ function PdfPage({ pdf, pageNum, scale, width, height, isDark }) {
 }
 
 export default function PdfReader({ file, url, initialPos, onLocation, controllerRef }) {
+  const t = useT()
   const theme = useSettings((s) => s.theme)
   const zoom = useSettings((s) => s.pdfZoom)
   const spread = useSettings((s) => s.pdfSpread)
@@ -121,11 +123,7 @@ export default function PdfReader({ file, url, initialPos, onLocation, controlle
         setBase({ w: vp1.width, h: vp1.height })
       } catch (e) {
         console.error(e)
-        setError(
-          file
-            ? "Impossible d'ouvrir ce PDF (fichier corrompu ?)."
-            : "Impossible de charger ce PDF depuis l'URL. Le site bloque peut-être l'accès direct (CORS). Télécharge-le puis glisse-le ici."
-        )
+        setError(file ? t('pdf.errFile') : t('pdf.errUrl'))
       }
     })()
     return () => task?.destroy?.()
@@ -175,8 +173,8 @@ export default function PdfReader({ file, url, initialPos, onLocation, controlle
       next: () => scrollToPage(Math.min(numPages, current + perRow)),
       getCurrent: () => ({
         position: { page: current },
-        label: `Page ${current}`,
-        preview: `${numPages} pages au total`,
+        label: t('pdf.page', { n: current }),
+        preview: t('pdf.totalPages', { n: numPages }),
       }),
     }
   }, [current, numPages, scrollToPage, perRow])
@@ -186,7 +184,7 @@ export default function PdfReader({ file, url, initialPos, onLocation, controlle
     return (
       <div className="reader-loading">
         <div className="spinner" />
-        <p>Chargement du PDF…</p>
+        <p>{t('pdf.loading')}</p>
       </div>
     )
 
@@ -217,18 +215,18 @@ export default function PdfReader({ file, url, initialPos, onLocation, controlle
       </div>
 
       <div className="pdf-controls">
-        <button className="pdf-ctrl-btn" onClick={zoomOut} title="Dézoomer" disabled={zoom <= 0.5}>
+        <button className="pdf-ctrl-btn" onClick={zoomOut} title={t('pdf.zoomOut')} disabled={zoom <= 0.5}>
           <IconZoomOut size={18} />
         </button>
         <span className="pdf-zoom-val">{Math.round(zoom * 100)}%</span>
-        <button className="pdf-ctrl-btn" onClick={zoomIn} title="Zoomer" disabled={zoom >= 2.5}>
+        <button className="pdf-ctrl-btn" onClick={zoomIn} title={t('pdf.zoomIn')} disabled={zoom >= 2.5}>
           <IconZoomIn size={18} />
         </button>
         <span className="pdf-ctrl-sep" />
         <button
           className="pdf-ctrl-btn"
           onClick={toggleSpread}
-          title={spread ? 'Une page par ligne' : 'Deux pages par ligne'}
+          title={spread ? t('pdf.single') : t('pdf.spread')}
         >
           {spread ? <IconSingle size={18} /> : <IconSpread size={18} />}
         </button>

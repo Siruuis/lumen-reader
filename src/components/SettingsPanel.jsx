@@ -1,5 +1,6 @@
 import { useSettings } from '../store/useSettings'
 import { THEMES, FONTS } from '../lib/themes'
+import { useT } from '../lib/i18n'
 import { IconClose } from './icons.jsx'
 
 function Slider({ label, value, min, max, step = 1, onChange, suffix = '' }) {
@@ -24,15 +25,18 @@ function Slider({ label, value, min, max, step = 1, onChange, suffix = '' }) {
   )
 }
 
+const LANGS = ['auto', 'fr', 'en']
+
 export default function SettingsPanel({ onClose }) {
   const s = useSettings()
+  const t = useT()
 
   return (
     <>
       <div className="scrim" onClick={onClose} />
       <aside className="panel panel-right fade-in">
         <div className="panel-head">
-          <h3>Apparence & confort</h3>
+          <h3>{t('settings.title')}</h3>
           <button className="icon-btn" onClick={onClose}>
             <IconClose />
           </button>
@@ -40,28 +44,43 @@ export default function SettingsPanel({ onClose }) {
 
         <div className="panel-body">
           <div className="group">
-            <label className="group-label">Ambiance</label>
-            <div className="theme-grid">
-              {THEMES.map((t) => (
+            <label className="group-label">{t('set.language')}</label>
+            <div className="seg">
+              {LANGS.map((id) => (
                 <button
-                  key={t.id}
-                  className={`theme-chip ${s.theme === t.id ? 'active' : ''}`}
-                  onClick={() => s.setTheme(t.id)}
-                  title={t.hint}
+                  key={id}
+                  className={s.lang === id ? 'active' : ''}
+                  onClick={() => s.set({ lang: id })}
                 >
-                  <span className="theme-swatch">
-                    {t.swatch.map((c, i) => (
-                      <i key={i} style={{ background: c }} />
-                    ))}
-                  </span>
-                  <span className="theme-name">{t.name}</span>
+                  {t(`set.lang.${id}`)}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="group">
-            <label className="group-label">Police</label>
+            <label className="group-label">{t('set.ambiance')}</label>
+            <div className="theme-grid">
+              {THEMES.map((th) => (
+                <button
+                  key={th.id}
+                  className={`theme-chip ${s.theme === th.id ? 'active' : ''}`}
+                  onClick={() => s.setTheme(th.id)}
+                  title={t(`theme.${th.id}.hint`)}
+                >
+                  <span className="theme-swatch">
+                    {th.swatch.map((c, i) => (
+                      <i key={i} style={{ background: c }} />
+                    ))}
+                  </span>
+                  <span className="theme-name">{t(`theme.${th.id}.name`)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="group">
+            <label className="group-label">{t('set.font')}</label>
             <div className="seg">
               {FONTS.map((f) => (
                 <button
@@ -70,16 +89,16 @@ export default function SettingsPanel({ onClose }) {
                   onClick={() => s.setFont(f.id)}
                   style={{ fontFamily: f.css }}
                 >
-                  {f.name.split(' ')[0]}
+                  {t(`font.${f.id}`)}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="group">
-            <label className="group-label">Lecture</label>
+            <label className="group-label">{t('set.reading')}</label>
             <Slider
-              label="Taille du texte"
+              label={t('set.fontSize')}
               value={s.fontSize}
               min={14}
               max={30}
@@ -87,7 +106,7 @@ export default function SettingsPanel({ onClose }) {
               suffix="px"
             />
             <Slider
-              label="Hauteur de ligne"
+              label={t('set.lineHeight')}
               value={s.lineHeight}
               min={1.3}
               max={2.4}
@@ -95,7 +114,7 @@ export default function SettingsPanel({ onClose }) {
               onChange={(v) => s.set({ lineHeight: v })}
             />
             <Slider
-              label="Largeur de page"
+              label={t('set.width')}
               value={s.contentWidth}
               min={520}
               max={1000}
@@ -104,7 +123,7 @@ export default function SettingsPanel({ onClose }) {
               suffix="px"
             />
             <Slider
-              label="Espacement des lettres"
+              label={t('set.letter')}
               value={s.letterSpacing}
               min={0}
               max={2}
@@ -115,9 +134,9 @@ export default function SettingsPanel({ onClose }) {
           </div>
 
           <div className="group">
-            <label className="group-label">Confort des yeux</label>
+            <label className="group-label">{t('set.comfort')}</label>
             <Slider
-              label="Chaleur (anti lumière bleue)"
+              label={t('set.warmth')}
               value={s.warmth}
               min={0}
               max={100}
@@ -125,17 +144,14 @@ export default function SettingsPanel({ onClose }) {
               suffix="%"
             />
             <Slider
-              label="Luminosité"
+              label={t('set.brightness')}
               value={s.brightness}
               min={50}
               max={100}
               onChange={(v) => s.set({ brightness: v })}
               suffix="%"
             />
-            <p className="hint">
-              Astuce : le soir, monte un peu la chaleur et baisse la luminosité
-              pour réduire la fatigue visuelle.
-            </p>
+            <p className="hint">{t('set.hint')}</p>
           </div>
         </div>
       </aside>

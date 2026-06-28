@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import ePub from 'epubjs'
 import { useSettings } from '../../store/useSettings'
+import { useT } from '../../lib/i18n'
 import { THEMES, FONTS } from '../../lib/themes'
 
 export default function EpubReader({ file, url, initialPos, onLocation, controllerRef }) {
   const settings = useSettings()
+  const t = useT()
   const hostRef = useRef(null)
   const bookRef = useRef(null)
   const rendRef = useRef(null)
@@ -61,11 +63,7 @@ export default function EpubReader({ file, url, initialPos, onLocation, controll
         })
       } catch (e) {
         console.error(e)
-        setError(
-          file
-            ? "Impossible d'ouvrir cet EPUB."
-            : "Impossible de charger cet EPUB depuis l'URL (CORS probable). Télécharge-le et glisse-le ici."
-        )
+        setError(file ? t('epub.errFile') : t('epub.errUrl'))
       }
     })()
     return () => {
@@ -96,8 +94,8 @@ export default function EpubReader({ file, url, initialPos, onLocation, controll
       next: () => rendRef.current?.next(),
       getCurrent: () => ({
         position: { cfi: curCfi.current },
-        label: curChapter.current || 'Marque-page',
-        preview: curChapter.current ? '' : 'Position dans le livre',
+        label: curChapter.current || t('bm.defaultLabel'),
+        preview: curChapter.current ? '' : t('epub.position'),
       }),
     }
   }, [])
@@ -109,7 +107,7 @@ export default function EpubReader({ file, url, initialPos, onLocation, controll
       {!ready && (
         <div className="reader-loading abs">
           <div className="spinner" />
-          <p>Ouverture du livre…</p>
+          <p>{t('epub.loading')}</p>
         </div>
       )}
       <div ref={hostRef} className="epub-host" />

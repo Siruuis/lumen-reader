@@ -1,3 +1,4 @@
+import { useT } from '../lib/i18n'
 import {
   IconBack,
   IconBookmark,
@@ -24,10 +25,11 @@ export default function Toolbar({
   onNext,
   hasPaging,
 }) {
+  const t = useT()
   return (
     <header className={`toolbar ${focusMode ? 'auto-hide' : ''}`}>
       <div className="tb-left">
-        <button className="icon-btn" onClick={onBack} title="Bibliothèque (Échap)">
+        <button className="icon-btn" onClick={onBack} title={t('tb.back')}>
           <IconBack />
         </button>
         <span className="tb-title" title={doc.title}>
@@ -38,11 +40,11 @@ export default function Toolbar({
       <div className="tb-center">
         {hasPaging && (
           <>
-            <button className="icon-btn" onClick={onPrev} title="Précédent">
+            <button className="icon-btn" onClick={onPrev} title={t('tb.prev')}>
               <IconChevL />
             </button>
             <span className="tb-progress">{Math.round((progress || 0) * 100)}%</span>
-            <button className="icon-btn" onClick={onNext} title="Suivant">
+            <button className="icon-btn" onClick={onNext} title={t('tb.next')}>
               <IconChevR />
             </button>
           </>
@@ -56,29 +58,29 @@ export default function Toolbar({
         <button
           className="icon-btn"
           onClick={onAddBookmark}
-          title="Ajouter un marque-page (B)"
+          title={t('tb.addBookmark')}
         >
           <IconBookmark />
         </button>
         <button
           className="icon-btn"
           onClick={onOpenBookmarks}
-          title="Mes marque-pages"
+          title={t('tb.bookmarks')}
         >
           <IconList />
           {bookmarkCount > 0 && <span className="dot">{bookmarkCount}</span>}
         </button>
-        <button className="icon-btn" onClick={onOpenNotes} title="Bloc-notes (N)">
+        <button className="icon-btn" onClick={onOpenNotes} title={t('tb.notes')}>
           <IconNote />
         </button>
         <button
           className={`icon-btn ${focusMode ? 'active' : ''}`}
           onClick={onToggleFocus}
-          title="Mode focus (F)"
+          title={t('tb.focus')}
         >
           <IconFocus />
         </button>
-        <button className="icon-btn" onClick={onOpenSettings} title="Apparence">
+        <button className="icon-btn" onClick={onOpenSettings} title={t('tb.appearance')}>
           <IconSettings />
         </button>
       </div>
