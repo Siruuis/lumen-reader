@@ -9,7 +9,27 @@ npm install
 npm run dev      # ouvre la fenêtre Lumen (Vite + Electron, hot-reload)
 ```
 
-## Construire l'application
+## Mises à jour automatiques
+
+L'app vérifie GitHub Releases au démarrage (puis toutes les 6 h), télécharge la
+nouvelle version en arrière-plan et l'installe au prochain redémarrage - aucune
+manipulation, plus besoin de remplacer l'`.exe`.
+
+**Publier une nouvelle version :**
+
+```bash
+npm run release   # bump le numéro de version, crée le tag et le pousse
+```
+
+Le push du tag déclenche **GitHub Actions** (`.github/workflows/release.yml`) qui
+build l'installateur Windows et le publie automatiquement dans les Releases du
+dépôt `Siruuis/lumen-reader`. Les apps déjà installées se mettent à jour seules.
+
+> Le tout premier installateur est ici :
+> https://github.com/Siruuis/lumen-reader/releases/latest
+> Installe-le une fois ; ensuite tout est automatique.
+
+## Construire l'application (local, optionnel)
 
 ```bash
 npm run pack     # crée l'app autonome dans release/Lumen-win32-x64/ (Lumen.exe)
