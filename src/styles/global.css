@@ -1,0 +1,364 @@
+/* ============================================================
+   Lumen — feuille de style globale
+   Thèmes pensés pour le confort des yeux :
+   pas de blanc pur sur noir pur, contrastes doux, tons chauds.
+   ============================================================ */
+
+:root {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Lora', Georgia, 'Times New Roman', serif;
+  --font-legible: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Réglables par l'utilisateur (overridés en inline sur .reader-surface) */
+  --reader-font-family: var(--font-serif);
+  --reader-font-size: 19px;
+  --reader-line-height: 1.75;
+  --reader-width: 720px;
+  --reader-letter: 0px;
+}
+
+/* ---------- Thèmes ---------- */
+
+/* Dusk — dark chaud par défaut, doux pour les yeux le soir */
+[data-theme='dusk'] {
+  --bg: #1c1916;
+  --bg-elev: #242019;
+  --surface: #2b261e;
+  --surface-hover: #332d24;
+  --text: #e6dcc8;
+  --text-soft: #b3a991;
+  --text-faint: #7d745f;
+  --accent: #d8a657;
+  --accent-soft: #5a4a2c;
+  --border: #3a3328;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  --ambient: rgba(224, 168, 86, 0.13);
+  --page-bg: #f4ecdd;
+  color-scheme: dark;
+}
+
+/* Ink — dark profond très peu contrasté, repos maximal */
+[data-theme='ink'] {
+  --bg: #141414;
+  --bg-elev: #1b1b1b;
+  --surface: #202020;
+  --surface-hover: #282828;
+  --text: #cfc9bf;
+  --text-soft: #948e84;
+  --text-faint: #5f5b53;
+  --accent: #9bb4a0;
+  --accent-soft: #2c3a30;
+  --border: #2c2c2c;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  --ambient: rgba(155, 180, 160, 0.08);
+  --page-bg: #ece9e2;
+  color-scheme: dark;
+}
+
+/* Midnight — dark froid mais adouci (bleu nuit) */
+[data-theme='midnight'] {
+  --bg: #15181f;
+  --bg-elev: #1b1f29;
+  --surface: #222734;
+  --surface-hover: #2a3040;
+  --text: #d4dae6;
+  --text-soft: #9aa3b5;
+  --text-faint: #69728a;
+  --accent: #8fb3e0;
+  --accent-soft: #2a3957;
+  --border: #2e3543;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  --ambient: rgba(143, 179, 224, 0.1);
+  --page-bg: #eef0f4;
+  color-scheme: dark;
+}
+
+/* Sepia — papier ancien, lecture diurne reposante */
+[data-theme='sepia'] {
+  --bg: #ece3d2;
+  --bg-elev: #f3ecdd;
+  --surface: #f7f1e4;
+  --surface-hover: #efe6d3;
+  --text: #4a3f2f;
+  --text-soft: #7a6c54;
+  --text-faint: #a4977c;
+  --accent: #a9762f;
+  --accent-soft: #e3d3b0;
+  --border: #ddd0b6;
+  --shadow: 0 18px 50px rgba(120, 100, 60, 0.18);
+  --ambient: rgba(169, 118, 47, 0.07);
+  --page-bg: #fbf6ea;
+  color-scheme: light;
+}
+
+/* Cream — clair neutre et doux */
+[data-theme='cream'] {
+  --bg: #f4f1ea;
+  --bg-elev: #faf8f3;
+  --surface: #ffffff;
+  --surface-hover: #f2efe8;
+  --text: #2f2c27;
+  --text-soft: #6b665d;
+  --text-faint: #9b958a;
+  --accent: #b07d3e;
+  --accent-soft: #ece2cf;
+  --border: #e4ded2;
+  --shadow: 0 18px 50px rgba(80, 70, 50, 0.12);
+  --ambient: rgba(176, 125, 62, 0.06);
+  --page-bg: #ffffff;
+  color-scheme: light;
+}
+
+/* ---------- Reset / base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background var(--transition), color var(--transition);
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+a {
+  color: var(--accent);
+}
+
+/* Scrollbar discrète */
+*::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+  border: 3px solid var(--bg);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- Encres des notes (cosy, adaptées au thème) ---------- */
+.ink-default {
+  color: var(--text);
+}
+.ink-amber {
+  color: #d8a657;
+}
+.ink-rust {
+  color: #d6916a;
+}
+.ink-sage {
+  color: #9cc0a0;
+}
+.ink-blue {
+  color: #8fb6df;
+}
+.ink-rose {
+  color: #d49ab4;
+}
+.ink-plum {
+  color: #c2a0d8;
+}
+.ink-teal {
+  color: #7ec9c0;
+}
+.ink-coral {
+  color: #e0897e;
+}
+.ink-lavender {
+  color: #a9aee0;
+}
+.ink-moss {
+  color: #bcc081;
+}
+/* En thème clair, on assombrit les encres pour qu'elles restent lisibles */
+[data-theme='sepia'] .ink-amber,
+[data-theme='cream'] .ink-amber {
+  color: #9a6a1e;
+}
+[data-theme='sepia'] .ink-rust,
+[data-theme='cream'] .ink-rust {
+  color: #a8542f;
+}
+[data-theme='sepia'] .ink-sage,
+[data-theme='cream'] .ink-sage {
+  color: #56784f;
+}
+[data-theme='sepia'] .ink-blue,
+[data-theme='cream'] .ink-blue {
+  color: #3c6a9c;
+}
+[data-theme='sepia'] .ink-rose,
+[data-theme='cream'] .ink-rose {
+  color: #9c4f73;
+}
+[data-theme='sepia'] .ink-plum,
+[data-theme='cream'] .ink-plum {
+  color: #6e4391;
+}
+[data-theme='sepia'] .ink-teal,
+[data-theme='cream'] .ink-teal {
+  color: #2c7268;
+}
+[data-theme='sepia'] .ink-coral,
+[data-theme='cream'] .ink-coral {
+  color: #b14a3b;
+}
+[data-theme='sepia'] .ink-lavender,
+[data-theme='cream'] .ink-lavender {
+  color: #5257a0;
+}
+[data-theme='sepia'] .ink-moss,
+[data-theme='cream'] .ink-moss {
+  color: #62692a;
+}
+
+/* ---------- Grain de papier (matière sur les aplats) ---------- */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8999;
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme='sepia'] .grain,
+[data-theme='cream'] .grain {
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+}
+
+/* ---------- Filtres de confort (warmth + luminosité) ---------- */
+/* Appliqués sur la couche de lecture via variables --warmth / --brightness */
+.comfort-veil {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9000;
+  background: #ff8a25;
+  mix-blend-mode: multiply;
+  opacity: calc(var(--warmth, 0) / 100 * 0.32);
+  transition: opacity var(--transition);
+}
+.brightness-veil {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9001;
+  background: #000;
+  opacity: calc((100 - var(--brightness, 100)) / 100 * 0.6);
+  transition: opacity var(--transition);
+}
+
+/* ---------- Utilitaires ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--transition), transform var(--transition);
+  border: 1px solid var(--border);
+}
+.btn:hover {
+  background: var(--surface-hover);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-accent {
+  background: var(--accent);
+  color: #1a1510;
+  border-color: transparent;
+}
+.btn-accent:hover {
+  filter: brightness(1.06);
+  background: var(--accent);
+}
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+}
+.btn-ghost:hover {
+  background: var(--surface);
+}
+.btn-danger {
+  background: #b8503f;
+  color: #fff;
+  border-color: transparent;
+}
+.btn-danger:hover {
+  background: #c95b48;
+}
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-soft);
+  transition: background var(--transition), color var(--transition);
+}
+.icon-btn:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+.icon-btn.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.fade-in {
+  animation: fadeIn 320ms ease both;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

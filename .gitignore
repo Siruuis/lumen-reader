@@ -1,0 +1,22 @@
+# Dépendances
+node_modules/
+
+# Sorties de build
+dist/
+release/
+release-new/
+release_stale/
+app-build/
+
+# Logs et fichiers parasites Windows
+*.log
+nul
+null
+con
+prn
+aux
+
+# Éditeurs / OS
+.vscode/
+.DS_Store
+Thumbs.db

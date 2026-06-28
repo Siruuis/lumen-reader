@@ -1,0 +1,36 @@
+name: release
+
+# Déclenché quand on pousse un tag de version (ex. v1.0.1).
+# Build l'installateur Windows et le publie dans GitHub Releases ;
+# l'app installée le détecte et se met à jour toute seule.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build renderer (Vite)
+        run: npm run build
+
+      - name: Build & publish installer
+        run: npx electron-builder --win --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
